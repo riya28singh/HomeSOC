@@ -25,28 +25,28 @@ HomeSOC can be deployed in two primary configurations. Ensure that you update th
 
 -Option A: Local Network Deployment (Isolated Lab)
 Best for testing on your home Wi-Fi.
-1)Server: Run python app.py. It will default to http://0.0.0.0:5000.
-2)Finder: Identify your server's local IP (e.g., 192.168.1.10).
-3)Agent: Set SERVER_URL = "http://192.168.1.10:5000/api/logs".
+- 1)Server: Run python app.py. It will default to http://0.0.0.0:5000.
+- 2)Finder: Identify your server's local IP (e.g., 192.168.1.10).
+- 3)Agent: Set SERVER_URL = "http://192.168.1.10:5000/api/logs".
 
 -Option B: Public Cloud Deployment (PythonAnywhere)
 Best for monitoring hosts across the global internet.
-1)Server: Deploy the server/ folder to PythonAnywhere.
-W2)SGI Setup: Configure your WSGI file to point to server/app.py.
-3)Agent: Set SERVER_URL = "http://YOURUSERNAME.pythonanywhere.com/api/logs".
+- 1)Server: Deploy the server/ folder to PythonAnywhere.
+- 2)WSGI Setup: Configure your WSGI file to point to server/app.py.
+- 3)Agent: Set SERVER_URL = "http://YOURUSERNAME.pythonanywhere.com/api/logs".
 
 ---
 
-##Installation & Setup
+## Installation & Setup
 1. Ingestion Server Setup (The Central Brain)
-bash
-cd server
-pip install -r ../requirements.txt
-python app.py
+- bash
+- cd server
+- pip install -r ../requirements.txt
+- python app.py
 2. Distributed Agent Deployment (The Sensors)
-bash
-cd agent
-python main.py
+- bash
+- cd agent
+- python main.py
 
 ---
 
