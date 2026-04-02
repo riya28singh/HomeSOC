@@ -1,20 +1,26 @@
 # HomeSOC: A Lightweight, Interactive Security Operations Center for Home Networks
 HomeSOC is a high-performance, minimalist Security Information and Event Management (SIEM) solution designed specifically for residential and small-office environments. It provides real-time security visibility into unmonitored host nodes with under 1% CPU overhead.
 
-##Key Features
+---
+
+## Key Features
 - Autonomous Host Agents: Real-time extraction of CPU, RAM, and authentication logs (auth.log).
 - Heuristic Detection Engine: Intelligent identification of brute-force attacks, clandestine cryptojacking, and reconnaissance binaries.
 - Zero-Latency Dashboard: Modern, asynchronous web interface utilizing AJAX polling for "Live" security alerts.
 - Optimized Persistence: High-concurrency SQL ledger utilizing Write-Ahead Logging (WAL) for non-blocking data ingestion.
 - Privacy-First: Strictly localized data pipelines for total telemetry sovereignty.
 
-##Technology Stack
--Backend: Python 3.10+, Flask REST API
--Database: SQLite3 (B-Tree Architecture with WAL Mode)
--Frontend: Vanilla JavaScript (ES6+), HTML5, CSS3 (Glassmorphism layout)
--Libraries: psutil (Kernel interfacing), flask-sqlalchemy (ORM), requests
+---
 
-##Deployment Configurations
+## Technology Stack
+- Backend: Python 3.10+, Flask REST API
+- Database: SQLite3 (B-Tree Architecture with WAL Mode)
+- Frontend: Vanilla JavaScript (ES6+), HTML5, CSS3 (Glassmorphism layout)
+- Libraries: psutil (Kernel interfacing), flask-sqlalchemy (ORM), requests
+
+---
+
+## Deployment Configurations
 HomeSOC can be deployed in two primary configurations. Ensure that you update the SERVER_URL in agent/main.py before cross-device execution.
 
 -Option A: Local Network Deployment (Isolated Lab)
@@ -29,6 +35,8 @@ Best for monitoring hosts across the global internet.
 W2)SGI Setup: Configure your WSGI file to point to server/app.py.
 3)Agent: Set SERVER_URL = "http://YOURUSERNAME.pythonanywhere.com/api/logs".
 
+---
+
 ##Installation & Setup
 1. Ingestion Server Setup (The Central Brain)
 bash
@@ -40,7 +48,9 @@ bash
 cd agent
 python main.py
 
-##Security Threat Monitoring
+---
+
+## Security Threat Monitoring
 HomeSOC is configured to detect and alert on the following scenarios:
 -Clandestine Cryptojacking: Persistent high CPU usage (>90% for 3 cycles).
 -Reconnaissance Scans: Detection of forbidden binaries like nmap or wireshark.
