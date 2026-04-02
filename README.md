@@ -23,17 +23,17 @@ HomeSOC is a high-performance, minimalist Security Information and Event Managem
 ## Deployment Configurations
 HomeSOC can be deployed in two primary configurations. Ensure that you update the SERVER_URL in agent/main.py before cross-device execution.
 
--Option A: Local Network Deployment (Isolated Lab)
+### 1) Option A: Local Network Deployment (Isolated Lab)
 Best for testing on your home Wi-Fi.
-- 1)Server: Run python app.py. It will default to http://0.0.0.0:5000.
-- 2)Finder: Identify your server's local IP (e.g., 192.168.1.10).
-- 3)Agent: Set SERVER_URL = "http://192.168.1.10:5000/api/logs".
+1. Server: Run python app.py. It will default to http://0.0.0.0:5000.
+2. Finder: Identify your server's local IP (e.g., 192.168.1.10).
+3. Agent: Set SERVER_URL = "http://192.168.1.10:5000/api/logs".
 
--Option B: Public Cloud Deployment (PythonAnywhere)
+### Option B: Public Cloud Deployment (PythonAnywhere)
 Best for monitoring hosts across the global internet.
-- 1)Server: Deploy the server/ folder to PythonAnywhere.
-- 2)WSGI Setup: Configure your WSGI file to point to server/app.py.
-- 3)Agent: Set SERVER_URL = "http://YOURUSERNAME.pythonanywhere.com/api/logs".
+1. Server: Deploy the server/ folder to PythonAnywhere.
+2. WSGI Setup: Configure your WSGI file to point to server/app.py.
+3. Agent: Set SERVER_URL = "http://YOURUSERNAME.pythonanywhere.com/api/logs".
 
 ---
 
