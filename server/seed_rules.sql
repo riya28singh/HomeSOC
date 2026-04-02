@@ -1,0 +1,9 @@
+INSERT INTO rules (name, description, condition_logic, severity, category, remediation_timeline, remedy) VALUES 
+('Abnormal CPU Load', 'CPU usage exceeds 50%', '{"field": "cpu_percent", "operator": ">", "value": 50}', 'low', 'Resource Exhaustion', '1-2 weeks', 'Check for background updates'),
+('High Memory Usage', 'Memory usage exceeds 70%', '{"field": "memory_percent", "operator": ">", "value": 70}', 'low', 'Resource Exhaustion', '1-2 weeks', 'Monitor for memory leaks'),
+('Failed Login Anomaly', 'Detects multiple failed logins', '{"field": "message", "value": "failed"}', 'medium', 'Brute Force', '3-5 days', 'Review authentication logs'),
+('Unauthorized Admin Access', 'Detects root user activity', '{"field": "raw_data", "value": "root"}', 'medium', 'Privilege Escalation', '3-5 days', 'Verify authorization of user'),
+('Suspicious Network Tool', 'Detects tools like netcat or nmap', '{"field": "process_list", "operator": "contains", "value": "nmap"}', 'high', 'Reconnaissance', '1-2 days', 'Investigate endpoint immediately'),
+('Malicious Process Activity', 'Detects cryptocurrency mining or known malware', '{"field": "process_list", "operator": "contains", "value": "xmrig"}', 'high', 'Malware', '1-2 days', 'Isolate host and run AV scan'),
+('Suspicious File Download', 'Detects downloading of potential scripts via wget', '{"field": "message", "operator": "contains", "value": "wget http"}', 'medium', 'Execution Prep', '1-3 days', 'Verify file legitimacy | Check if the downloaded script was executed by the user.'),
+('Spear Phishing Attempt Detected', 'Detects emails containing known malicious domains', '{"field": "raw_data", "operator": "contains", "value": "login-update-required.xyz"}', 'high', 'Social Engineering', 'Immediate', 'Isolate endpoint. Block sender domain at firewall. Reset user credentials.');

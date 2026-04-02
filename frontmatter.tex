@@ -1,0 +1,103 @@
+% Report Status Declaration Form
+\chapter*{Report Status Declaration Form}
+\addcontentsline{toc}{chapter}{Report Status Declaration Form}
+\vspace{1cm}
+I hereby declare that this thesis is my original work and has not been submitted to any other university or institution for any degree. The research presented here was conducted in accordance with the university guidelines.
+\vspace{2cm}\\
+\noindent
+Author Signature: \rule{5cm}{1pt} \\
+Date: \rule{3cm}{1pt} \\
+
+\clearpage
+
+% Secondary Title Page
+\chapter*{Title Page}
+\addcontentsline{toc}{chapter}{Title Page}
+\begin{center}
+    \vspace*{2cm}
+    {\fontsize{14pt}{16.8pt}\selectfont \textbf{Design and Implementation of HomeSOC:\\ A Lightweight Local Security Operations Center}\par}
+    \vspace{2cm}
+    {\fontsize{12pt}{14.4pt}\selectfont \textbf{By}\par}
+    {\fontsize{12pt}{14.4pt}\selectfont \textbf{[Your Name]}\par}
+    \vspace{2cm}
+    {\fontsize{12pt}{14.4pt}\selectfont \textbf{Under the supervision of}\par}
+    {\fontsize{12pt}{14.4pt}\selectfont \textbf{[Supervisor Name]}\par}
+\end{center}
+
+\clearpage
+
+% Declaration of Originality
+\chapter*{Declaration of Originality}
+\addcontentsline{toc}{chapter}{Declaration of Originality}
+This is to certify that the project report entitled ``Design and Implementation of HomeSOC: A Lightweight Local Security Operations Center'' submitted by [Your Name], Enrollment Number [Enrollment], for the award of Bachelor of Technology (BTech) in Computer Science and Engineering from the School of Computer Science Engineering \& Technology, is a bonafide record of original research work carried out under my supervision. The contents of this report, in full or in parts, have not been submitted to any other Institution or University for the award of any degree or diploma.
+\vspace{2cm}\\
+\noindent
+\rule{5cm}{1pt} \\
+\textbf{Supervisor Name}\\
+
+\clearpage
+
+% Acknowledgements
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+Sincere gratitude is extended to all individuals who provided guidance and support during the development of this project. Special appreciation is given to the project supervisor for their invaluable insights, continuous encouragement, and technical feedback throughout the research and implementation phases. Furthermore, gratitude is expressed to the faculty members of the School of Computer Science Engineering \& Technology for establishing a foundation of knowledge that made this complex security engineering project possible. 
+
+\clearpage
+
+% Abstract
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+With the proliferation of connected devices in home and small office networks, managing local security threats has become increasingly complex. While large-scale enterprises rely on sophisticated Security Information and Event Management (SIEM) systems and Security Operations Centers (SOC), these solutions are fundamentally too resource-intensive, expensive, and opaque for residential or lightweight deployments. This thesis presents the design, methodology, and implementation of ``HomeSOC'', a highly efficient, lightweight local Security Operations Center explicitly architected for small-scale networks. 
+
+The primary problem addressed was the lack of an accessible, low-latency alerting system capable of monitoring local hosts without deploying enterprise-grade infrastructure. The proposed approach developed a Python-based host agent script tailored for local telemetry collection (including authentication logs, process state, and system metrics) alongside a robust detection engine driven by a centralised Flask server. To handle concurrent data ingestion and ensure data integrity under high volume, SQLite was leveraged with Write-Ahead Logging (WAL) concurrency controls. The entire system was transitioned from a local prototype to a fully containerised cloud deployment hosted on PythonAnywhere. 
+
+The research process validated the capability of HomeSOC to instantly detect, categorise, and triage anomalies like brute-force attacks, suspected cryptominers, and spear-phishing attempts. Through the development of an intelligent, dynamic web dashboard featuring zero-latency asynchronous Javascript polling and custom threshold alerts, the project achieved a sophisticated, aesthetically premium monitoring solution. The conclusion confirms that a robust security framework can be attained on lightweight hardware, offering novel contributions to affordable network visibility, and paving the pathway for machine-learning-driven predictive anomaly detection in future iterations.
+
+\clearpage
+
+% Table of Contents
+\tableofcontents
+\clearpage
+
+% List of Tables
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\clearpage
+
+% List of Figures
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\clearpage
+
+% List of Symbols
+\chapter*{List of Symbols}
+\addcontentsline{toc}{chapter}{List of Symbols}
+\begin{tabular}{ll}
+\% & Percentage (used in CPU and Memory load metrics) \\
+/ & Directory path separator \\
+$>$ & Greater than (used in logical alert triggers) \\
+$<$ & Less than \\
+\end{tabular}
+
+\clearpage
+
+% List of Abbreviations
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\begin{tabular}{ll}
+API & Application Programming Interface \\
+CPU & Central Processing Unit \\
+CSS & Cascading Style Sheets \\
+HTML & HyperText Markup Language \\
+JSON & JavaScript Object Notation \\
+MVP & Minimum Viable Product \\
+OS & Operating System \\
+RAM & Random Access Memory \\
+SIEM & Security Information and Event Management \\
+SOC & Security Operations Center \\
+SQL & Structured Query Language \\
+UI & User Interface \\
+WAL & Write-Ahead Logging \\
+\end{tabular}
+
+\clearpage

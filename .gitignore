@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.sqlite
+*.sqlite3
+*.zip
+venv/
+env/
+.env
+*.aux
+*.log
+*.pdf
+*.out
+*.toc

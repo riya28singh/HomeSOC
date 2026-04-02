@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home SOC - Terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Impeccable Color System (OKLCH tinted blue-grey with amber bias, softer glow) */
+            --bg-base: oklch(20% 0.02 240);
+            --bg-surface: oklch(25% 0.03 240);
+            --bg-elevated: oklch(30% 0.04 240);
+
+            --text-main: oklch(95% 0.01 240);
+            --text-dim: oklch(75% 0.02 240);
+            --text-muted: oklch(60% 0.02 240);
+
+            --border-subtle: oklch(35% 0.03 240);
+            --border-strong: oklch(45% 0.04 240);
+
+            --accent-primary: oklch(75% 0.18 55); /* Amber/Orange */
+            --accent-danger: oklch(65% 0.22 25); /* Crimson Red */
+            --accent-warning: oklch(80% 0.15 70); /* Yellow */
+            --accent-success: oklch(80% 0.15 140); /* Lime Green */
+
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Fluid Spacing */
+            --space-xs: clamp(0.5rem, 1vw, 0.75rem);
+            --space-sm: clamp(1rem, 2vw, 1.5rem);
+            --space-md: clamp(2rem, 4vw, 3rem);
+            --space-lg: clamp(4rem, 8vw, 6rem);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(300px, 25vw) 1fr;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+        }
+
+        /* Sidebar */
+        aside {
+            border-right: 1px solid var(--border-subtle);
+            padding: var(--space-md) var(--space-sm);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            box-sizing: border-box;
+            background-color: var(--bg-surface);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2), inset -1px 0 12px color-mix(in oklch, var(--accent-primary) 5%, transparent);
+        }
+
+        @media (max-width: 900px) {
+            aside {
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+        }
+
+        .brand-header h1 {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 300;
+            letter-spacing: -0.05em;
+            margin: 0 0 0.5rem 0;
+            text-transform: uppercase;
+        }
+
+        .brand-header h1 strong {
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-shadow: 0 0 16px color-mix(in oklch, var(--accent-primary) 40%, transparent);
+        }
+
+        #clock {
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+
+        .status-block {
+            margin-top: auto;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: var(--space-md);
+        }
+
+        .metric-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 300;
+            line-height: 1;
+            color: var(--text-main);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-success);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent-success);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--space-lg) var(--space-md);
+            max-width: 1400px;
+        }
+
+        .section-header {
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid var(--border-strong);
+            padding-bottom: var(--space-sm);
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* Data Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 1rem 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            font-weight: 400;
+        }
+
+        td {
+            padding: 1.5rem 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: top;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s var(--ease-out-expo);
+        }
+
+        tbody tr:hover {
+            background-color: var(--bg-surface);
+        }
+
+        .col-time, .col-host {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+
+        .col-rule {
+            font-weight: 500;
+            font-size: 1.125rem;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .col-category {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .remedy-layman {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            max-width: 40ch;
+        }
+
+        .remedy-tech {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 50ch;
+        }
+
+        .sev-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid currentColor;
+            box-shadow: 0 0 8px color-mix(in oklch, currentColor 30%, transparent);
+        }
+        
+        .sev-high { color: var(--accent-danger); background-color: color-mix(in oklch, var(--accent-danger) 10%, transparent); }
+        .sev-medium { color: var(--accent-warning); background-color: color-mix(in oklch, var(--accent-warning) 10%, transparent); }
+        .sev-low { color: var(--accent-success); background-color: color-mix(in oklch, var(--accent-success) 10%, transparent); }
+
+        .btn-action {
+            appearance: none;
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s var(--ease-out-expo);
+        }
+
+        .btn-action:hover {
+            background: var(--text-main);
+            color: var(--bg-base);
+            border-color: var(--text-main);
+        }
+        
+        .status-handled {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .timeline-cell {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-base);
+            padding: 0.25rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-strong);
+        }
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .toggle-btn.active {
+            background: var(--text-main);
+            color: var(--bg-base);
+        }
+
+        .payload-key {
+            color: var(--accent-primary);
+            font-weight: 700;
+            margin-right: 0.5rem;
+            display: inline-block;
+            min-width: 120px;
+        }
+        .payload-value {
+            color: var(--text-main);
+            word-break: break-all;
+        }
+        .payload-row {
+            margin-bottom: 0.5rem;
+            display: flex;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 10000;
+            pointer-events: none;
+            background: rgba(0,0,0,0);
+            transition: background 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+        }
+
+        #toast-container:has(.toast) {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            padding: 3rem;
+            border: 4px solid currentColor;
+            background: var(--bg-surface);
+            min-width: 450px;
+            max-width: 650px;
+            pointer-events: auto;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #toast-container:has(.toast) .toast {
+            transform: scale(1);
+        }
+
+        .toast-high {
+            color: #ff0000; /* Pure Vivid Red */
+            box-shadow: 0 0 120px rgba(255, 0, 0, 0.5), inset 0 0 30px rgba(255, 0, 0, 0.2);
+        }
+
+        .toast-medium {
+            color: #ffcc00; /* Intense Warning Yellow */
+            box-shadow: 0 0 100px rgba(255, 204, 0, 0.4), inset 0 0 25px rgba(255, 204, 0, 0.1);
+        }
+
+        .toast-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            opacity: 0.7;
+            margin-bottom: 0.35rem;
+        }
+
+        .toast-body {
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        @keyframes toast-in {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toast-out {
+            to { opacity: 0; transform: translateX(40px); }
+        }
+    </style>
+</head>
+
+<body>
+    <aside>
+        <div class="brand-header">
+            <h1>Home<strong>SOC</strong></h1>
+            <div id="clock">00:00:00</div>
+        </div>
+
+        <div class="status-block">
+            <div class="metric-group">
+                <span class="metric-label">Active Alerts</span>
+                <span class="metric-value" id="alert-count">00</span>
+            </div>
+            
+            <div class="system-status">
+                <div class="status-dot"></div>
+                <span>SYSTEM.MONITORING_ACTIVE</span>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="section-header">
+            <h2>Incident Triage</h2>
+            <div class="view-toggle">
+                <button class="toggle-btn active" id="btn-view-active" onclick="setViewMode('active')">Live Feed</button>
+                <button class="toggle-btn" id="btn-view-ack" onclick="setViewMode('acknowledged')">History</button>
+                <button class="toggle-btn" id="btn-view-sql" onclick="setViewMode('sql')">SQL Sandbox</button>
+            </div>
+        </div>
+
+        <table id="alerts-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Node</th>
+                    <th>Alert Profile</th>
+                    <th>Severity</th>
+                    <th>Resolution Path</th>
+                    <th>Timeline</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="alerts-body">
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); font-family: var(--font-mono); padding: 4rem 0;">AWAITING TELEMETRY...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div id="sql-sandbox" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-md);">
+                <div style="background: var(--bg-surface); padding: var(--space-md); border: 1px solid var(--border-strong);">
+                    <h3 style="font-family: var(--font-mono); font-size: 0.875rem; margin-top: 0; margin-bottom: 1rem; color: var(--accent-primary); text-transform: uppercase;">Database Schema</h3>
+                    <ul style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); list-style: none; padding: 0; line-height: 2;">
+                        <li><strong style="color: var(--text-main);">logs</strong>: id, host_id, event_type, message, raw_data, timestamp</li>
+                        <li><strong style="color: var(--text-main);">alerts</strong>: id, host_id, rule_name, severity, category, remediation_timeline, description, raw_payload, status, timestamp</li>
+                        <li><strong style="color: var(--text-main);">rules</strong>: id, name, description, condition_logic, severity, category, remediation_timeline, remedy, enabled</li>
+                    </ul>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <textarea id="sql-query-input" style="flex-grow: 1; min-height: 150px; background: color-mix(in oklch, var(--bg-base) 90%, black); border: 1px solid var(--border-strong); color: var(--text-main); font-family: var(--font-mono); font-size: 0.875rem; padding: 1rem; resize: vertical;" placeholder="Type your SQL query here (e.g., SELECT * FROM alerts)..."></textarea>
+                    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                        <button class="btn-action" onclick="runQuery()">Execute Query</button>
+                    </div>
+                </div>
+            </div>
+            <div id="sql-results-container" style="margin-top: var(--space-md);">
+                <pre id="sql-results-output" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-main); background: var(--bg-surface); padding: 1.5rem; border: 1px solid var(--border-strong); min-height: 150px; overflow-x: auto; white-space: pre-wrap;">Results will appear here...</pre>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false }) + '.' + now.getMilliseconds().toString().padStart(3, '0');
+            requestAnimationFrame(updateClock);
+        }
+
+        let viewMode = 'active';
+        const expandedRows = new Set();
+        let currentAlertsDataStr = "";
+        let isFirstLoad = true;
+        const knownAlertIds = new Set(); 
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            currentAlertsDataStr = "";
+            document.getElementById('btn-view-active').classList.toggle('active', mode === 'active');
+            document.getElementById('btn-view-ack').classList.toggle('active', mode === 'acknowledged');
+            document.getElementById('btn-view-sql').classList.toggle('active', mode === 'sql');
+            
+            const table = document.getElementById('alerts-table');
+            const sandbox = document.getElementById('sql-sandbox');
+            const sectionStatus = document.querySelector('.section-header h2');
+            
+            if (mode === 'sql') {
+                table.style.display = 'none';
+                sandbox.style.display = 'block';
+                sectionStatus.innerText = 'SQL Analytics Sandbox';
+            } else {
+                table.style.display = 'table';
+                sandbox.style.display = 'none';
+                sectionStatus.innerText = 'Incident Triage';
+                fetchAlerts();
+            }
+        }
+
+        function showToast(severity, ruleName, hostname) {
+            // 1. Explicitly skip 'low' from showing a pop-up
+            if (severity === 'low') return;
+            // 2. Only show for high or medium
+            if (severity !== 'high' && severity !== 'medium') return;
+
+            const container = document.getElementById('toast-container');
+            
+            // 3. ONLY show one dialog box at a time
+            if (container.hasChildNodes()) {
+                console.log("Toast already active, skipping overlap");
+                return;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${severity}`;
+            toast.innerHTML = `
+                <div class="toast-label">${severity === 'high' ? '⚠️ CRITICAL SECURITY INCIDENT' : '◈ SECURITY ADVISORY'}</div>
+                <div class="toast-body" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">${ruleName}</div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 2rem; opacity: 0.7;">Target Host: ${hostname || 'Unknown'}</div>
+                <button class="btn-action" style="width: 100%; font-size: 1rem; padding: 1rem;" onclick="this.parentElement.remove()">ACKNOWLEDGE & DISMISS</button>
+            `;
+            container.appendChild(toast);
+        }
+
+        async function fetchAlerts() {
+            try {
+                const response = await fetch('/api/alerts', { cache: 'no-store' });
+                const alerts = await response.json();
+                
+                const tbody = document.getElementById('alerts-body');
+                if (!tbody) return;
+                
+                const activeCount = alerts.filter(a => a.status !== 'handled' && a.status !== 'resolved').length;
+                document.getElementById('alert-count').innerText = activeCount.toString().padStart(2, '0');
+
+                alerts.forEach(a => {
+                    if (!knownAlertIds.has(a.id)) {
+                        knownAlertIds.add(a.id);
+                        if (!isFirstLoad && (a.severity === 'high' || a.severity === 'medium') &&
+                             a.status !== 'handled' && a.status !== 'resolved') {
+                            showToast(a.severity, a.rule_name, a.hostname);
+                        }
+                    }
+                });
+                isFirstLoad = false;
+
+                const displayAlerts = alerts.filter(a => {
+                    if (viewMode === 'active') return a.status !== 'handled' && a.status !== 'resolved';
+                    return a.status === 'handled' || a.status === 'resolved';
+                });
+
+                if (viewMode === 'sql') return;
+
+                const newDataStr = JSON.stringify(displayAlerts);
+                if (newDataStr === currentAlertsDataStr) {
+                    return; 
+                }
+                currentAlertsDataStr = newDataStr;
+
+                tbody.innerHTML = '';
+                if (displayAlerts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); font-family: var(--font-mono); padding: 4rem 0;">NO ANOMALIES DETECTED</td></tr>';
+                    return;
+                }
+
+                displayAlerts.forEach((alert, index) => {
+                    const row = document.createElement('tr');
+                    
+                    let sevClass = 'sev-low';
+                    if (alert.severity === 'high') sevClass = 'sev-high';
+                    if (alert.severity === 'medium') sevClass = 'sev-medium';
+
+                    let remedyLayman = "No remedy provided.";
+                    let remedyTech = "";
+                    let remedyRaw = alert.remedy || alert.description || "";
+                    
+                    if (remedyRaw.includes('|')) {
+                        const parts = remedyRaw.split('|');
+                        remedyLayman = parts[1].trim();
+                        remedyTech = parts[0].trim();
+                    } else {
+                        remedyLayman = remedyRaw;
+                    }
+                    
+                    let actionHtml = '';
+                    if (alert.status !== 'handled' && alert.status !== 'resolved') {
+                        actionHtml = `<button class="btn-action" onclick="handleAlert(${alert.id}, event)">Acknowledge</button>`;
+                    } else {
+                        actionHtml = `<span class="status-handled">ACKNOWLEDGED</span>`;
+                        row.style.opacity = '0.5';
+                    }
+
+                    row.style.cursor = 'pointer';
+                    row.onclick = () => toggleDetails(alert.id);
+
+                    row.innerHTML = `
+                        <td class="col-time">${new Date(alert.created_at).toLocaleTimeString('en-US', { hour12: false })}</td>
+                        <td class="col-host">${alert.hostname || 'UNKNOWN_HOST'}</td>
+                        <td>
+                            <div class="col-rule">${alert.rule_name}</div>
+                            <div class="col-category">${alert.category || 'GENERIC_EVENT'}</div>
+                        </td>
+                        <td><span class="sev-tag ${sevClass}">${alert.severity}</span></td>
+                        <td>
+                            <div class="remedy-layman">${remedyLayman}</div>
+                            ${remedyTech ? `<div class="remedy-tech">${remedyTech}</div>` : ''}
+                        </td>
+                        <td class="timeline-cell">${alert.remediation_timeline || 'N/A'}</td>
+                        <td>${actionHtml}</td>
+                    `;
+                    tbody.appendChild(row);
+
+                    const detailsRow = document.createElement('tr');
+                    detailsRow.id = `details-${alert.id}`;
+                    detailsRow.style.display = expandedRows.has(alert.id) ? 'table-row' : 'none';
+                    
+                    let payloadHtml = "";
+                    try {
+                        const raw = JSON.parse(alert.raw_payload || '{}');
+                        for (const [key, value] of Object.entries(raw)) {
+                            const cleanKey = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                            let cleanValue = value;
+                            if (typeof value === 'object') cleanValue = JSON.stringify(value, null, 2);
+                            payloadHtml += `<div class="payload-row"><span class="payload-key">${cleanKey}:</span> <span class="payload-value">${cleanValue}</span></div>`;
+                        }
+                    } catch (e) {
+                        payloadHtml = `<div class="payload-value">${alert.raw_payload || "No raw data captured."}</div>`;
+                    }
+                    
+                    detailsRow.innerHTML = `
+                        <td colspan="7" style="padding: 0; border: none;">
+                            <div style="background: var(--bg-surface); padding: 1.5rem; margin: 0 0.5rem 1rem 0.5rem; border-left: 3px solid var(--accent-primary); font-family: var(--font-display); font-size: 0.9rem; box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);">
+                                <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Extracted Incident Evidence</div>
+                                ${payloadHtml}
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(detailsRow);
+                });
+            } catch (error) {
+                console.error("Error fetching alerts:", error);
+            }
+        }
+
+        function toggleDetails(id) {
+            const row = document.getElementById(`details-${id}`);
+            if (row) {
+                if (row.style.display === 'none') {
+                    row.style.display = 'table-row';
+                    expandedRows.add(id);
+                } else {
+                    row.style.display = 'none';
+                    expandedRows.delete(id);
+                }
+            }
+        }
+
+        async function handleAlert(id, event) {
+            if (event) {
+                event.stopPropagation();
+                const btn = event.currentTarget;
+                btn.innerText = "Processing...";
+                btn.disabled = true;
+            }
+            try {
+                const response = await fetch(`/api/alerts/${id}/handle`, { method: 'POST' });
+                if (response.ok) {
+                    currentAlertsDataStr = ""; 
+                    fetchAlerts(); 
+                }
+            } catch (error) {
+                console.error("Error handling alert:", error);
+            }
+        }
+
+        async function runQuery() {
+            const queryInput = document.getElementById('sql-query-input').value;
+            const output = document.getElementById('sql-results-output');
+            if (!queryInput.trim()) {
+                output.innerText = "Please enter a query.";
+                return;
+            }
+            output.innerText = "Executing query...";
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: queryInput })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    output.innerText = JSON.stringify(data.results || data, null, 2);
+                } else {
+                    output.innerText = "Error: " + data.error;
+                }
+            } catch (error) {
+                output.innerText = "Network error: " + error.message;
+            }
+        }
+
+        requestAnimationFrame(updateClock);
+        setInterval(fetchAlerts, 2000); 
+        fetchAlerts(); 
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Backend (Server)
+flask==3.0.0
+mysql-connector-python==8.2.0
+python-dotenv==1.0.0  # For managing environment variables (DB creds)
+flask-cors==4.0.0     # If frontend interaction requires CORS (optional but good practice)
+email-validator==2.1.0 # If adding user auth validation
+
+# Agent (Client)
+requests==2.31.0
+psutil==5.9.6
+user-agents==2.2.0    # Optional, helpful for parsing if doing web log analysis
+watchdog==3.0.0       # For file integrity monitoring (FIM)
+
+# Development / Testing / Utils
+pytest==7.4.3
+gunicorn==21.2.0      # For production deployment server (optional for demo)
+faker==20.0.0         # For generating fake log data for testing
